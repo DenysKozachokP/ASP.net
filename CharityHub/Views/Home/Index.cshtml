@@ -1,0 +1,20 @@
+@model CharityHub.Models.ViewModels.EventsListViewModel
+
+@foreach (var e in Model.Events)
+{
+    <div class="border rounded p-3 m-3 shadow-sm">
+        <h3>@e.Title</h3>
+        <p>@e.Description</p>
+        <p><strong>Місце:</strong> @e.Location</p>
+        <p><strong>Дата:</strong> @e.Date.ToShortDateString()</p>
+        <h5 class="text-success">Ціль: @e.TargetAmount.ToString("C")</h5>
+    </div>
+}
+
+<div class="m-3">
+    @for (int i = 1; i <= Model.PagingInfo.TotalPages; i++)
+    {
+        <a class="btn @(i == Model.PagingInfo.CurrentPage ? "btn-primary" : "btn-outline-primary")"
+           href="/Home/Index?page=@i">@i</a>
+    }
+</div>

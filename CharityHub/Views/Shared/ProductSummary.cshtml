@@ -1,0 +1,9 @@
+@model CharityHub.Models.Event
+
+<div class="border rounded p-3 m-3 shadow-sm">
+    <h3>@Model.Title</h3>
+    <p>@Model.Description</p>
+    <p><strong>Місце:</strong> @Model.Location</p>
+    <p><strong>Дата:</strong> @Model.Date.ToShortDateString()</p>
+    <h5 class="text-success">Ціль: @Model.TargetAmount.ToString("C")</h5>
+</div>

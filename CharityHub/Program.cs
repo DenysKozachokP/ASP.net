@@ -4,6 +4,13 @@ using CharityHub.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
 
 builder.Services.AddDbContext<CharityDbContext>(opts =>
 {
@@ -15,6 +22,8 @@ builder.Services.AddScoped<ICharityRepository, EFCharityRepository>();
 var app = builder.Build();
 
 app.UseStaticFiles();
+
+app.UseSession();
 
 app.MapDefaultControllerRoute();
 

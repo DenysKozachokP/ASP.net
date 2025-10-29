@@ -168,3 +168,4 @@ F:\Навчання\Навчання_4_курс\ASP.net\lab_02\CharitySln\Charit
 F:\Навчання\Навчання_4_курс\ASP.net\lab_02\CharitySln\CharityHub\bin\Debug\net8.0\runtimes\win\lib\net6.0\System.Windows.Extensions.dll
 F:\Навчання\Навчання_4_курс\ASP.net\lab_02\CharitySln\CharityHub\obj\Debug\net8.0\CharityHub.csproj.Up2Date
 F:\Навчання\Навчання_4_курс\ASP.net\lab_02\CharitySln\CharityHub\bin\Debug\net8.0\libman.json
+F:\Навчання\Навчання_4_курс\ASP.net\lab_02\CharitySln\CharityHub\obj\Debug\net8.0\CharityHub.sourcelink.json

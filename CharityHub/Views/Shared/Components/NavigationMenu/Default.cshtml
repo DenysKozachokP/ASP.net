@@ -1,0 +1,18 @@
+@model IEnumerable<string>
+
+<div class="list-group">
+    <a class="list-group-item list-group-item-action @(string.IsNullOrEmpty((string?)ViewBag.SelectedCategory) ? "active" : "")"
+       asp-controller="Home" asp-action="Index" asp-route-page="1" asp-route-reset="true">
+        Home
+    </a>
+    @foreach (var c in Model)
+    {
+        <a class="list-group-item list-group-item-action @(ViewBag.SelectedCategory == c ? "active" : "")"
+           asp-controller="Home" asp-action="Index" asp-route-category="@c" asp-route-page="1">
+            @c
+        </a>
+    }
+    
+</div>
+
+

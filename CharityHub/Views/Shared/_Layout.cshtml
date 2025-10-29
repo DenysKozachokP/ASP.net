@@ -13,7 +13,14 @@
     </header>
 
     <main role="main" class="container py-4">
-        @RenderBody()
+        <div class="row">
+            <aside class="col-3">
+                @await Component.InvokeAsync("NavigationMenu")
+            </aside>
+            <section class="col-9">
+                @RenderBody()
+            </section>
+        </div>
     </main>
 
     <footer class="bg-dark text-white text-center py-3 mt-4">

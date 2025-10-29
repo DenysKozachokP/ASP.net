@@ -4,5 +4,6 @@ namespace CharityHub.Models.ViewModels
     {
         public IEnumerable<Event> Events { get; set; } = Enumerable.Empty<Event>();
         public PagingInfo PagingInfo { get; set; } = new PagingInfo();
+        public string? CurrentCategory { get; set; }
     }
 }

@@ -14,11 +14,31 @@ namespace CharityHub.Controllers
             repository = repo;
         }
 
-        public IActionResult Index(int page = 1)
+        private const string SelectedCategorySessionKey = "SelectedCategory";
+
+        public IActionResult Index(string? category, int page = 1, bool reset = false)
         {
+            if (reset)
+            {
+                HttpContext.Session.Remove(SelectedCategorySessionKey);
+                category = null;
+            }
+
+            if (!string.IsNullOrEmpty(category))
+            {
+                HttpContext.Session.SetString(SelectedCategorySessionKey, category);
+            }
+            else
+            {
+                category = HttpContext.Session.GetString(SelectedCategorySessionKey);
+            }
+
+            var filtered = repository.Events
+                .Where(e => category == null || e.Location == category);
+
             var eventsList = new EventsListViewModel
             {
-                Events = repository.Events
+                Events = filtered
                     .OrderBy(e => e.EventId)
                     .Skip((page - 1) * PageSize)
                     .Take(PageSize),
@@ -27,8 +47,9 @@ namespace CharityHub.Controllers
                 {
                     CurrentPage = page,
                     ItemsPerPage = PageSize,
-                    TotalItems = repository.Events.Count()
-                }
+                    TotalItems = filtered.Count()
+                },
+                CurrentCategory = category
             };
 
             return View(eventsList);

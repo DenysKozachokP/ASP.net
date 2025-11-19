@@ -1,0 +1,47 @@
+@model Event
+
+@{
+    ViewData["Title"] = "Редагувати подію";
+}
+
+<h2>Редагувати подію</h2>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="EventId" />
+            <div class="form-group mb-3">
+                <label asp-for="Title" class="control-label">Назва</label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="Description" class="control-label">Опис</label>
+                <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="Date" class="control-label">Дата</label>
+                <input asp-for="Date" class="form-control" type="datetime-local" value="@Model.Date.ToString("yyyy-MM-ddTHH:mm")" />
+                <span asp-validation-for="Date" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="Location" class="control-label">Місце</label>
+                <input asp-for="Location" class="form-control" />
+                <span asp-validation-for="Location" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="TargetAmount" class="control-label">Цільова сума</label>
+                <input asp-for="TargetAmount" class="form-control" type="number" step="0.01" />
+                <span asp-validation-for="TargetAmount" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Зберегти" class="btn btn-primary" />
+                <a asp-action="Index" class="btn btn-secondary">Скасувати</a>
+            </div>
+        </form>
+    </div>
+</div>
+

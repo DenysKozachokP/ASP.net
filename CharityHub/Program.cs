@@ -14,7 +14,7 @@ builder.Services.AddSession(options =>
 
 builder.Services.AddDbContext<CharityDbContext>(opts =>
 {
-    opts.UseSqlServer(builder.Configuration["ConnectionStrings:CharityHubConnection"]);
+    opts.UseSqlite(builder.Configuration["ConnectionStrings:CharityHubConnection"]);
 });
 
 builder.Services.AddScoped<ICharityRepository, EFCharityRepository>();

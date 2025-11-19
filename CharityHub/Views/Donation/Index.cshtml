@@ -1,0 +1,44 @@
+@model IEnumerable<Donation>
+
+@{
+    ViewData["Title"] = "Пожертви";
+}
+
+<h2>Список пожертв</h2>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Створити нову пожертву</a>
+</p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Донор</th>
+            <th>Сума</th>
+            <th>Дата</th>
+            <th>Подія</th>
+            <th>Коментар</th>
+            <th>Дії</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.DonationId</td>
+                <td>@item.DonorName</td>
+                <td>@item.Amount.ToString("C")</td>
+                <td>@item.DonationDate.ToString("dd.MM.yyyy")</td>
+                <td>@(item.Event?.Title ?? "Не вказано")</td>
+                <td>@(item.Comment?.Length > 30 ? item.Comment.Substring(0, 30) + "..." : item.Comment ?? "-")</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.DonationId" class="btn btn-info btn-sm">Деталі</a>
+                    <a asp-action="Edit" asp-route-id="@item.DonationId" class="btn btn-warning btn-sm">Редагувати</a>
+                    <a asp-action="Delete" asp-route-id="@item.DonationId" class="btn btn-danger btn-sm">Видалити</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+

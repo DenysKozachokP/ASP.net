@@ -1,0 +1,6 @@
+@CharityHub.API_HostAddress = http://localhost:5095
+
+GET {{CharityHub.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

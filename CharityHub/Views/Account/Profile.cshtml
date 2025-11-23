@@ -1,0 +1,56 @@
+@model CharityHub.Models.ViewModels.ProfileModel
+
+@{
+    ViewData["Title"] = "Особистий кабінет";
+}
+
+<h2>Особистий кабінет</h2>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Profile" method="post">
+            <input type="hidden" asp-for="Id" />
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="form-group mb-3">
+                <label asp-for="FirstName" class="control-label">Ім'я</label>
+                <input asp-for="FirstName" class="form-control" />
+                <span asp-validation-for="FirstName" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="LastName" class="control-label">Прізвище</label>
+                <input asp-for="LastName" class="form-control" />
+                <span asp-validation-for="LastName" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="Email" class="control-label">Email</label>
+                <input asp-for="Email" class="form-control" type="email" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            @if (!string.IsNullOrEmpty(Model.Role))
+            {
+                <div class="form-group mb-3">
+                    <label class="control-label">Роль</label>
+                    <input type="text" class="form-control" value="@Model.Role" readonly />
+                </div>
+            }
+            <div class="form-group">
+                <input type="submit" value="Зберегти зміни" class="btn btn-primary" />
+                <a asp-action="Index" asp-controller="Home" class="btn btn-secondary">Скасувати</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+

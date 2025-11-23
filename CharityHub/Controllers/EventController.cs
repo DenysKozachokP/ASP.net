@@ -1,9 +1,11 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CharityHub.Models;
 
 namespace CharityHub.Controllers
 {
+    [Authorize]
     public class EventController : Controller
     {
         private ICharityRepository repository;
@@ -105,6 +107,7 @@ namespace CharityHub.Controllers
         }
 
         // Delete - GET (підтвердження)
+        [Authorize(Roles = "Admin")]
         public IActionResult Delete(long? id)
         {
             if (id == null)
@@ -124,6 +127,7 @@ namespace CharityHub.Controllers
         // Delete - POST
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public IActionResult DeleteConfirmed(long id)
         {
             var eventItem = repository.GetEventById(id);

@@ -1,0 +1,214 @@
+@page "/events"
+@attribute [Authorize]
+
+<PageTitle>Події</PageTitle>
+
+<h1 class="mb-4">Події</h1>
+
+@if (isLoading)
+{
+    <p><em>Завантаження...</em></p>
+}
+else if (!string.IsNullOrEmpty(loadError))
+{
+    <div class="alert alert-danger">@loadError</div>
+}
+else
+{
+    <div class="table-responsive mb-4">
+        <table class="table table-striped align-middle">
+            <thead>
+                <tr>
+                    <th>Назва</th>
+                    <th>Опис</th>
+                    <th>Дата</th>
+                    <th>Місце</th>
+                    <th>Цільова сума</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (events.Count == 0)
+                {
+                    <tr>
+                        <td colspan="6" class="text-center">Поки що немає подій</td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var eventItem in events)
+                    {
+                        <tr>
+                            <td>@eventItem.Title</td>
+                            <td>@eventItem.Description</td>
+                            <td>@eventItem.Date.ToShortDateString()</td>
+                            <td>@eventItem.Location</td>
+                            <td>@eventItem.TargetAmount.ToString("N0") грн</td>
+                            <td class="text-end">
+                                <button class="btn btn-sm btn-outline-primary me-2" @onclick="() => StartEditing(eventItem)">Редагувати</button>
+                                <button class="btn btn-sm btn-outline-danger" @onclick="() => DeleteEvent(eventItem.EventId)">Видалити</button>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            @(isEditMode ? "Редагування події" : "Створення нової події")
+        </div>
+        <div class="card-body">
+            @if (!string.IsNullOrEmpty(formError))
+            {
+                <div class="alert alert-danger">@formError</div>
+            }
+
+            <EditForm Model="editingEvent" OnValidSubmit="HandleValidSubmit">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label" for="title">Назва</label>
+                        <InputText id="title" class="form-control" @bind-Value="editingEvent.Title" />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="location">Місце</label>
+                        <InputText id="location" class="form-control" @bind-Value="editingEvent.Location" />
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label" for="description">Опис</label>
+                        <InputTextArea id="description" class="form-control" @bind-Value="editingEvent.Description" rows="3" />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="date">Дата</label>
+                        <InputDate TValue="DateTime" id="date" class="form-control" @bind-Value="editingEvent.Date" />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="amount">Цільова сума</label>
+                        <InputNumber TValue="decimal" id="amount" class="form-control" @bind-Value="editingEvent.TargetAmount" />
+                    </div>
+                </div>
+
+                <div class="mt-4 d-flex gap-2">
+                    <button class="btn btn-primary" type="submit" disabled="@formSubmitting">
+                        @(formSubmitting ? "Збереження..." : "Зберегти")
+                    </button>
+                    <button class="btn btn-secondary" type="button" @onclick="ResetForm" disabled="@formSubmitting">
+                        Очистити
+                    </button>
+                </div>
+            </EditForm>
+        </div>
+    </div>
+}
+
+@code {
+    private readonly List<EventDto> events = new();
+    private EventDto editingEvent = new();
+    private bool isEditMode;
+    private bool isLoading = true;
+    private bool formSubmitting;
+    private string? loadError;
+    private string? formError;
+
+    [Inject] private EventService EventService { get; set; } = default!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadEventsAsync();
+    }
+
+    private async Task LoadEventsAsync()
+    {
+        isLoading = true;
+        loadError = null;
+
+        try
+        {
+            events.Clear();
+            events.AddRange(await EventService.GetEventsAsync());
+        }
+        catch (Exception ex)
+        {
+            loadError = ex.Message;
+        }
+        finally
+        {
+            isLoading = false;
+            StateHasChanged();
+        }
+    }
+
+    private void StartEditing(EventDto eventItem)
+    {
+        isEditMode = true;
+        editingEvent = new EventDto
+        {
+            EventId = eventItem.EventId,
+            Title = eventItem.Title,
+            Description = eventItem.Description,
+            Date = eventItem.Date,
+            Location = eventItem.Location,
+            TargetAmount = eventItem.TargetAmount
+        };
+        formError = null;
+    }
+
+    private void ResetForm()
+    {
+        isEditMode = false;
+        editingEvent = new EventDto
+        {
+            Date = DateTime.Today
+        };
+        formError = null;
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        formError = null;
+        formSubmitting = true;
+
+        (bool Success, string? Error) result;
+        if (isEditMode && editingEvent.EventId.HasValue)
+        {
+            result = await EventService.UpdateEventAsync(editingEvent.EventId.Value, editingEvent);
+        }
+        else
+        {
+            result = await EventService.CreateEventAsync(editingEvent);
+        }
+
+        formSubmitting = false;
+
+        if (!result.Success)
+        {
+            formError = result.Error;
+            return;
+        }
+
+        ResetForm();
+        await LoadEventsAsync();
+    }
+
+    private async Task DeleteEvent(long? eventId)
+    {
+        if (eventId is null)
+        {
+            return;
+        }
+
+        var (success, error) = await EventService.DeleteEventAsync(eventId.Value);
+        if (!success)
+        {
+            formError = error;
+            return;
+        }
+
+        await LoadEventsAsync();
+    }
+}
+

@@ -41,6 +41,18 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+// Enable CORS for Blazor client
+const string AllowBlazorClientPolicy = "AllowBlazorClient";
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(AllowBlazorClientPolicy, policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
+
 // Налаштування бази даних
 builder.Services.AddDbContext<CharityDbContext>(opts =>
 {
@@ -100,6 +112,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors(AllowBlazorClientPolicy);
 
 app.UseAuthentication();
 app.UseAuthorization();

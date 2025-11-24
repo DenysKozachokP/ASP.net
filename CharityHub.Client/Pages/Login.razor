@@ -1,0 +1,60 @@
+@page "/login"
+
+<PageTitle>Вхід</PageTitle>
+
+<h1 class="mb-4">Вхід до системи</h1>
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert alert-danger" role="alert">@errorMessage</div>
+}
+
+<EditForm Model="loginModel" OnValidSubmit="HandleLogin">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label class="form-label" for="email">Email</label>
+        <InputText id="email" class="form-control" @bind-Value="loginModel.Email" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label" for="password">Пароль</label>
+        <InputText id="password" class="form-control" type="password" @bind-Value="loginModel.Password" />
+    </div>
+
+    <div class="d-flex gap-2">
+        <button class="btn btn-primary" type="submit" disabled="@isSubmitting">
+            @(isSubmitting ? "Виконується..." : "Увійти")
+        </button>
+        <a class="btn btn-outline-secondary" href="/register">Створити акаунт</a>
+    </div>
+</EditForm>
+
+@code {
+    private readonly LoginRequest loginModel = new();
+    private bool isSubmitting;
+    private string? errorMessage;
+
+    [Inject] private AuthService AuthService { get; set; } = default!;
+    [Inject] private NavigationManager Navigation { get; set; } = default!;
+
+    private async Task HandleLogin()
+    {
+        errorMessage = null;
+        isSubmitting = true;
+
+        var (success, error) = await AuthService.LoginAsync(loginModel);
+        isSubmitting = false;
+
+        if (success)
+        {
+            Navigation.NavigateTo("/events", true);
+        }
+        else
+        {
+            errorMessage = error ?? "Невідома помилка аутентифікації";
+        }
+    }
+}
+

@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("CharityHub")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6ad1b3533d2969cbfb278fa89b0d03c5d9c04d15")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+969192f2237076590192d3180d7664c86ccb8814")]
 [assembly: System.Reflection.AssemblyProductAttribute("CharityHub")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CharityHub")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

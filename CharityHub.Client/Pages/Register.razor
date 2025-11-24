@@ -1,0 +1,73 @@
+@page "/register"
+
+<PageTitle>Реєстрація</PageTitle>
+
+<h1 class="mb-4">Створення облікового запису</h1>
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert alert-danger" role="alert">@errorMessage</div>
+}
+
+<EditForm Model="registerModel" OnValidSubmit="HandleRegister">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="row g-3">
+        <div class="col-md-6">
+            <label class="form-label" for="firstName">Ім'я</label>
+            <InputText id="firstName" class="form-control" @bind-Value="registerModel.FirstName" />
+        </div>
+        <div class="col-md-6">
+            <label class="form-label" for="lastName">Прізвище</label>
+            <InputText id="lastName" class="form-control" @bind-Value="registerModel.LastName" />
+        </div>
+        <div class="col-md-6">
+            <label class="form-label" for="email">Email</label>
+            <InputText id="email" class="form-control" @bind-Value="registerModel.Email" />
+        </div>
+        <div class="col-md-6">
+            <label class="form-label" for="password">Пароль</label>
+            <InputText id="password" type="password" class="form-control" @bind-Value="registerModel.Password" />
+        </div>
+        <div class="col-md-6">
+            <label class="form-label" for="confirmPassword">Підтвердження пароля</label>
+            <InputText id="confirmPassword" type="password" class="form-control" @bind-Value="registerModel.ConfirmPassword" />
+        </div>
+    </div>
+
+    <div class="mt-4 d-flex gap-2">
+        <button class="btn btn-success" type="submit" disabled="@isSubmitting">
+            @(isSubmitting ? "Реєстрація..." : "Зареєструватися")
+        </button>
+        <a class="btn btn-outline-secondary" href="/login">Вже маєте акаунт?</a>
+    </div>
+</EditForm>
+
+@code {
+    private readonly RegisterRequest registerModel = new();
+    private bool isSubmitting;
+    private string? errorMessage;
+
+    [Inject] private AuthService AuthService { get; set; } = default!;
+    [Inject] private NavigationManager Navigation { get; set; } = default!;
+
+    private async Task HandleRegister()
+    {
+        errorMessage = null;
+        isSubmitting = true;
+
+        var (success, error) = await AuthService.RegisterAsync(registerModel);
+        isSubmitting = false;
+
+        if (success)
+        {
+            Navigation.NavigateTo("/events", true);
+        }
+        else
+        {
+            errorMessage = error ?? "Сталася помилка під час реєстрації";
+        }
+    }
+}
+
